@@ -1,66 +1,48 @@
 import java.util.Random;
-
 import lombok.*;
 
 @Data
-public class Chromosome {
+public class Individual {
 
     private int id;
-    private int a;
-    private int b;
-    private int c;
-    private int d;
+    private int []cromosomas;
     private double objFunction;
     private double fitness;
     private double  probability;
     private double cumulativeProb;
-    private boolean selected = false;
+    private int crossoverState; // 0 not selected | 1 waiting for crossover | 2 crossover
     @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
     private static Random generator = new Random();
 
-    public Chromosome(){
-        this.a = (int)generator.nextDouble()*30;
-        this.b = (int)generator.nextDouble()*30;
-        this.c = (int)generator.nextDouble()*30;
-        this.d = (int)generator.nextDouble()*30;
-        objectiveFunction();
-        fitness();
+    public Individual(int chromosome_size){
+        this.cromosomas = new int[chromosome_size];
+        for (int i = 0; i < chromosome_size; i++) {
+            this.cromosomas[i] = generator.nextInt(31);
+        }
     }
 
-    public Chromosome(int a, int b, int c, int d){
-        this.a = a;
-        this.b = b;
-        this.c = c;
-        this.d = d;
-        objectiveFunction();
-        fitness();
+    //Copy constructor
+    public Individual(Individual from){
+        this.cromosomas = new int[from.cromosomas.length];
+        this.id = from.id;
+        for (int i = 0; i < from.cromosomas.length; i++) {
+            this.cromosomas[i] = from.cromosomas[i];
+        }
     }
 
-    public Chromosome(Chromosome c1, Chromosome c2){
-        this.id = c2.id;
-        this.a = c1.a;
-        this.b = c1.b;
-        this.c = c1.c;
-        this.d = c1.d;
-        this.objFunction = c2.objFunction;
-        this.fitness = c2.fitness;
-        this.probability = c2.probability;
-        this.cumulativeProb = c2.cumulativeProb;
-    }
-
-    public void crossover(Chromosome c1, int cutPoint){
+    public void crossover(Individual c1, int cutPoint){
         switch (cutPoint){
             case 1:
-                this.b = c1.getB();
-                this.c = c1.getC();
-                this.d = c1.getD();
+                this.cromosomas[1] = c1.getCromosomas()[1];
+                this.cromosomas[2] = c1.getCromosomas()[2];
+                this.cromosomas[3] = c1.getCromosomas()[3];
                 break;
             case 2:
-                this.c = c1.getC();
-                this.d = c1.getD();
+                this.cromosomas[2] = c1.getCromosomas()[2];
+                this.cromosomas[3] = c1.getCromosomas()[3];
                 break;
             case 3:
-                this.d = c1.getD();
+                this.cromosomas[3] = c1.getCromosomas()[3];
                 break;
             case 0:
                 break;
@@ -68,23 +50,13 @@ public class Chromosome {
     }
 
     public void objectiveFunction(){
-        this.objFunction = Math.abs((this.a + 2*this.b + 3*this.c + 4*this.d) - 30);
+        if(this.cromosomas.length > 0){
+            this.objFunction = Math.abs((this.cromosomas[0] + (2*this.cromosomas[1]) + (3*this.cromosomas[2]) + (4*this.cromosomas[3])) - 30);
+        }
     }
 
     public void fitness(){
         this.fitness = 1 / (1 + this.objFunction);
     }
 
-    public Chromosome(Chromosome c) {
-        this.id = c.id;
-        this.a = c.a;
-        this.b = c.b;
-        this.c = c.c;
-        this.d = c.d;
-        this.objFunction = c.objFunction;
-        this.fitness = c.fitness;
-        this.probability = c.probability;
-        this.cumulativeProb = c.cumulativeProb;
-        this.selected = c.selected;
-    }
 }
