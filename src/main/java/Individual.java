@@ -1,10 +1,11 @@
 import java.util.Random;
-import lombok.Data;
+
+import lombok.*;
 
 @Data
 public class Chromosome {
 
-    private int number;
+    private int id;
     private int a;
     private int b;
     private int c;
@@ -14,12 +15,14 @@ public class Chromosome {
     private double  probability;
     private double cumulativeProb;
     private boolean selected = false;
+    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    private static Random generator = new Random();
 
     public Chromosome(){
-        this.a = new Random().nextInt(30);
-        this.b = new Random().nextInt(30);
-        this.c = new Random().nextInt(30);
-        this.d = new Random().nextInt(30);
+        this.a = (int)generator.nextDouble()*30;
+        this.b = (int)generator.nextDouble()*30;
+        this.c = (int)generator.nextDouble()*30;
+        this.d = (int)generator.nextDouble()*30;
         objectiveFunction();
         fitness();
     }
@@ -34,7 +37,7 @@ public class Chromosome {
     }
 
     public Chromosome(Chromosome c1, Chromosome c2){
-        this.number = c2.number;
+        this.id = c2.id;
         this.a = c1.a;
         this.b = c1.b;
         this.c = c1.c;
@@ -65,7 +68,7 @@ public class Chromosome {
     }
 
     public void objectiveFunction(){
-        this.objFunction = (this.a + 2*this.b + 3*this.c + 4*this.d) - 30;
+        this.objFunction = Math.abs((this.a + 2*this.b + 3*this.c + 4*this.d) - 30);
     }
 
     public void fitness(){
@@ -73,7 +76,7 @@ public class Chromosome {
     }
 
     public Chromosome(Chromosome c) {
-        this.number = c.number;
+        this.id = c.id;
         this.a = c.a;
         this.b = c.b;
         this.c = c.c;
